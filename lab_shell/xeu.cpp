@@ -9,6 +9,8 @@
 #include <sys/wait.h>
 #include <stdio.h>
 #include <string.h>
+#include <errno.h>
+#include <string.h>
 
 using namespace xeu_utils;
 using namespace std;
@@ -111,7 +113,8 @@ int main() {
       return 0;
     }
     if (fork() == 0) {
-      execvp(c.filename(), c.argv());
+      int returnvalue = execvp(c.filename(), c.argv());
+      cout << strerror(errno) << endl;
     } else {
       wait(&status);
     }
