@@ -4,6 +4,7 @@
 #include <vector>
 #include <cstdio>
 #include <sstream>
+#include <unistd.h>
 
 using namespace xeu_utils;
 using namespace std;
@@ -95,7 +96,13 @@ int main() {
   // If the user just presses ENTER without any command, commands.size() is 0
   const vector<Command> commands = StreamParser().parse().commands();
 
-  commands_explanation(commands);
+  // commands_explanation(commands);
+
+  Command c;
+  for (int i = 0; i < commands.size(); i++) {
+    c = commands[i];
+    execvp(c.filename(), c.argv());
+  }
 
   return 0;
 }
