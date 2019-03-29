@@ -112,7 +112,12 @@ int main() {
     if (strcmp(c.filename(), "exit") == 0) {
       return 0;
     }
-    if (fork() == 0) {
+    if (strcmp(c.filename(), "xeu-bg") == 0) {
+      if (fork() == 0) {
+        int returnvalue = execvp(c.argv()[1], &c.argv()[1]);
+        cout << strerror(errno) << endl;
+      }
+    } else if (fork() == 0) {
       int returnvalue = execvp(c.filename(), c.argv());
       cout << strerror(errno) << endl;
     } else {
