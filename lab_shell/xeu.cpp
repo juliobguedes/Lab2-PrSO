@@ -5,6 +5,10 @@
 #include <cstdio>
 #include <sstream>
 #include <unistd.h>
+#include <sys/types.h>
+#include <sys/wait.h>
+#include <stdio.h>
+#include <string.h>
 
 using namespace xeu_utils;
 using namespace std;
@@ -94,14 +98,23 @@ int main() {
   //   ps aux | grep xeu
   // commands.size() would be 2: (ps aux) and (grep xeu)
   // If the user just presses ENTER without any command, commands.size() is 0
-  const vector<Command> commands = StreamParser().parse().commands();
+  while (true) {
+    cout << "panqueca >> ";
+    const vector<Command> commands = StreamParser().parse().commands();
 
-  // commands_explanation(commands);
+    // commands_explanation(commands);
 
-  Command c;
-  for (int i = 0; i < commands.size(); i++) {
-    c = commands[i];
-    execvp(c.filename(), c.argv());
+    int status;
+    Command c = commands[0];
+
+    if (strcmp(c.filename(), "exit") == 0) {
+      return 0;
+    }
+    if (fork() == 0) {
+      execvp(c.filename(), c.argv());
+    } else {
+      wait(&status);
+    }
   }
 
   return 0;
