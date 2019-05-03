@@ -7,7 +7,7 @@
 # NOTE: there may be methods you don't need to modify, you must decide what
 # you need...
 
-class PhysicalMemory:
+class PhysicalMemory(object):
   ALGORITHM_AGING_NBITS = 8
   """How many bits to use for the Aging algorithm"""
 
@@ -35,3 +35,71 @@ class PhysicalMemory:
   def access(self, frameId, isWrite):
     """A frameId was accessed for read/write (if write, isWrite=True)"""
     pass
+
+class FIFO(PhysicalMemory):
+  def __init__(self):
+    from Queue import Queue
+    super(FIFO, self).__init__("fifo")
+
+    self.queue = Queue()
+  
+  def put(self, frameId):
+    self.queue.put(frameId)
+
+  def evict(self):
+    return self.queue.get()
+
+  def clock(self):
+    pass
+
+  def access(self, frameId, isWrite):
+    pass
+
+class NRU(PhysicalMemory):
+  def __init__(self):
+    super(NRU, self).__init__("nru")
+  
+  def put(self, frameId):
+    pass
+
+  def evict(self):
+    return 0
+
+  def clock(self):
+    pass
+
+  def access(self, frameId, isWrite):
+    pass
+
+class Aging(PhysicalMemory):
+  def __init__(self):
+    super(Aging, self).__init__("aging")
+  
+  def put(self, frameId):
+    pass
+
+  def evict(self):
+    return 0
+
+  def clock(self):
+    pass
+
+  def access(self, frameId, isWrite):
+    pass
+
+class SecondChance(PhysicalMemory):
+  def __init__(self):
+    super(SecondChance, self).__init__("second-chance")
+  
+  def put(self, frameId):
+    pass
+
+  def evict(self):
+    return 0
+
+  def clock(self):
+    pass
+
+  def access(self, frameId, isWrite):
+    pass
+

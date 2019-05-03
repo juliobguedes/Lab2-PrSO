@@ -1,5 +1,5 @@
 import sys
-from phymem import PhysicalMemory
+from phymem import *
 
 class VirtualMemory:
     def __init__(self, npages, nframes, physicalMemory):
@@ -59,6 +59,13 @@ if __name__ == "__main__":
     alg = sys.argv[3]
     clock = int(sys.argv[4])
 
+    mapNameToClass = {
+        "fifo": FIFO,
+        "nru": NRU,
+        "aging": Aging,
+        "second-chance": SecondChance
+    }
+
     # read workload from input file
     workload = []
     for line in sys.stdin.readlines():
@@ -66,7 +73,7 @@ if __name__ == "__main__":
         workload.append((int(page_id), mode == "w"))
 
     # setup simulation
-    phyMem = PhysicalMemory(alg)
+    phyMem = mapNameToClass[alg]()
     vMem = VirtualMemory(num_pages, num_frames, phyMem)
 
     # fire
