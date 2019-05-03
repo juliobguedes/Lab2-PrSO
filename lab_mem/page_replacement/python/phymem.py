@@ -70,6 +70,26 @@ class NRU(PhysicalMemory):
 
   def access(self, frameId, isWrite):
     pass
+  
+ class LRU(PhysicalMemory):
+  def __init__(self):
+    super(LRU, self).__init__("lru")
+    self.lista = []
+  
+  def put(self, frameId):
+    if frameId in self.lista:
+      self.lista.remove(frameId)
+    self.lista.append(frameId)
+
+  def evict(self):
+    return self.lista.pop(0)
+
+  def clock(self):
+    pass
+
+  def access(self, frameId, isWrite):
+    pass
+  
 
 class Aging(PhysicalMemory):
   def __init__(self):
