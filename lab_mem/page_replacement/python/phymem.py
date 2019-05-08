@@ -55,21 +55,47 @@ class FIFO(PhysicalMemory):
   def access(self, frameId, isWrite):
     pass
 
+#Niveis de prioridade
+
+# 3. referenced, modified
+# 2. referenced, not modified
+# 1. not referenced, modified
+# 0. not referenced, not modified
+
 class NRU(PhysicalMemory):
   def __init__(self):
     super(NRU, self).__init__("nru")
+    self.frames = []
   
+  #(frameID, referenced, modified, Nivel prioridade)
   def put(self, frameId):
-    pass
+    self.frames.append((frameId, false, false, 0))
 
   def evict(self):
-    return 0
+    pageToEvict = -1
+    for page in self.frames: 
+      pageToEvict = min(page[3], pageToEvict)
+    
+    return pageToEvict
 
   def clock(self):
     pass
 
   def access(self, frameId, isWrite):
-    pass
+    for page in self.frames:
+      if(page[0] === frameId):
+        page[1] = true
+        page[2] = isWrite
+
+    if(page[1] and page[2]):
+      page[3] = 3
+    else if(page[1] and (not page[2])):
+      page[3] = 2
+    else if ((not page[1]) and page[2]):
+      page[3] = 1
+    else:
+      page[3] = 0 
+
   
  class LRU(PhysicalMemory):
   def __init__(self):
