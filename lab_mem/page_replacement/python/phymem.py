@@ -55,8 +55,7 @@ class FIFO(PhysicalMemory):
   def access(self, frameId, isWrite):
     pass
 
-#Niveis de prioridade
-
+# Niveis de prioridade
 # 3. referenced, modified
 # 2. referenced, not modified
 # 1. not referenced, modified
@@ -69,7 +68,7 @@ class NRU(PhysicalMemory):
   
   #(frameID, referenced, modified, Nivel prioridade)
   def put(self, frameId):
-    self.frames.append((frameId, false, false, 0))
+    self.frames.append((frameId, False, False, 0))
 
   def evict(self):
     pageToEvict = -1
@@ -83,21 +82,24 @@ class NRU(PhysicalMemory):
 
   def access(self, frameId, isWrite):
     for page in self.frames:
-      if(page[0] === frameId):
-        page[1] = true
-        page[2] = isWrite
+      if(page[0] == frameId):
+        prioridade = -1
 
-    if(page[1] and page[2]):
-      page[3] = 3
-    else if(page[1] and (not page[2])):
-      page[3] = 2
-    else if ((not page[1]) and page[2]):
-      page[3] = 1
-    else:
-      page[3] = 0 
+        if(page[1] and page[2]):
+          prioridade = 3
+        elif(page[1] and (not page[2])):
+          prioridade = 2
+        elif ((not page[1]) and page[2]):
+          prioridade = 1
+        else:
+          prioridade = 0 
 
+        page = (frameId, True, isWrite, prioridade)
+
+
+    
   
- class LRU(PhysicalMemory):
+class LRU(PhysicalMemory):
   def __init__(self):
     super(LRU, self).__init__("lru")
     self.lista = []
@@ -136,16 +138,30 @@ class Aging(PhysicalMemory):
 class SecondChance(PhysicalMemory):
   def __init__(self):
     super(SecondChance, self).__init__("second-chance")
-  
-  def put(self, frameId):
-    pass
+    self.frames = []
 
+  def put(self, frameId):
+    found = False
+    for page in self.frames:
+      if(frameId == page[0]):
+        found = True
+        page = (frameId, not page[1])
+        break
+
+    if(not found):
+      self.frames.append((frameId, False))
+
+  #Achando que sempre vai encontrar ao menos um que tenha 'false'
   def evict(self):
-    return 0
+    for page in self.frames:
+      if(page[1] == False):
+        return page[0]
 
   def clock(self):
     pass
 
   def access(self, frameId, isWrite):
-    pass
+    for page in self.frames:
+      if(page[0] == frameId):
+        page = (frameId, not page[1])
 
