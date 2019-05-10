@@ -11,3 +11,7 @@ nfaults,nframes,alg
 217320,32,nru
 360375,4,nru
 273369,8,nru
+138523,16,second-chance
+98035,32,second-chance
+302856,4,second-chance
+205360,8,second-chance
