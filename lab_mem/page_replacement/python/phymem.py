@@ -120,44 +120,48 @@ class LRU(PhysicalMemory):
 class Aging(PhysicalMemory):
   def __init__(self):
     super(Aging, self).__init__("aging")
+    self.frames = {}
   
   def put(self, frameId):
-    pass
+    self.frames[frameId] = "1"
 
   def evict(self):
-    return 0
+    min = ""
+    for frame in self.frames:
+      if min == "" or frame < self.frames[min]:
+        min = self.frames[frame]
+    self.frames.pop(min)
 
   def clock(self):
-    pass
+    for frame in self.frames:
+      self.frames[frame] = "0" + self.frames[frame]
 
   def access(self, frameId, isWrite):
-    pass
+    self.frames[frameId] = "1" + self.frames[frameId]
 
 class SecondChance(PhysicalMemory):
   def __init__(self):
     from Queue import Queue
     super(FIFO, self).__init__("secondchance")
     self.frames = Queue()
+    self.second_chance = {}
 
   def put(self, frameId):
-    self.frames.put((frameId, False))
+    self.frames.put(frameId)
+    self.second_chance[frameId] = 0
 
-  #Achando que sempre vai encontrar ao menos um que tenha 'false'
   def evict(self):
     while(True):
-      frame, chance = self.frames.get()
-      if(chance == True):
-        self.frames.put((frame, False))          
+      frameId = self.frames.get()
+      if(self.second_chance(frameId) == 0):
+        self.frames.put(frameId)
+        self.second_chance[frameId] = 1          
       else:
         return frame 
 
   def clock(self):
     pass
 
-  # tem que ajeitar access
   def access(self, frameId, isWrite):
-    for i in range(len(self.frames)):
-      if(self.frames[i][0] == frameId):
-        self.frames[i] = (frameId, True)
-        break
+    self.second_chance.pop(frameId)
 
