@@ -1,0 +1,13 @@
+nfaults,nframes,alg
+679191,16,aging
+589500,32,aging
+671823,4,aging
+683802,8,aging
+138523,16,fifo
+98035,32,fifo
+302856,4,fifo
+205360,8,fifo
+233303,16,nru
+217320,32,nru
+360375,4,nru
+273369,8,nru

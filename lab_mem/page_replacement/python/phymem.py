@@ -73,6 +73,7 @@ class NRU(PhysicalMemory):
   def evict(self):
     aux = min(self.frames, key=lambda x: x[3])
     self.frames.remove(aux)
+    return aux[0]
 
   def clock(self):
     pass
@@ -126,11 +127,13 @@ class Aging(PhysicalMemory):
     self.frames[frameId] = "1"
 
   def evict(self):
-    min = ""
+    mn = ""
     for frame in self.frames:
-      if min == "" or frame < self.frames[min]:
-        min = self.frames[frame]
-    self.frames.pop(min)
+      if mn == "" or int(self.frames[frame], 2) < int(self.frames[mn], 2):
+        mn = frame
+    
+    self.frames.pop(mn)
+    return mn
 
   def clock(self):
     for frame in self.frames:
@@ -142,7 +145,7 @@ class Aging(PhysicalMemory):
 class SecondChance(PhysicalMemory):
   def __init__(self):
     from Queue import Queue
-    super(FIFO, self).__init__("secondchance")
+    super(SecondChance, self).__init__("second-chance")
     self.frames = Queue()
     self.second_chance = {}
 
@@ -153,15 +156,16 @@ class SecondChance(PhysicalMemory):
   def evict(self):
     while(True):
       frameId = self.frames.get()
-      if(self.second_chance(frameId) == 0):
+      if(self.second_chance[frameId] == 0):
         self.frames.put(frameId)
         self.second_chance[frameId] = 1          
       else:
-        return frame 
+        self.second_chance.pop(frameId)
+        return frameId
 
   def clock(self):
     pass
 
   def access(self, frameId, isWrite):
-    self.second_chance.pop(frameId)
+    pass
 
