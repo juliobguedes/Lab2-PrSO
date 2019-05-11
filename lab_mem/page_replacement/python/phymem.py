@@ -12,7 +12,7 @@ class PhysicalMemory(object):
   """How many bits to use for the Aging algorithm"""
 
   def __init__(self, algorithm):
-    assert algorithm in {"fifo", "nru", "aging", "second-chance"}
+    assert algorithm in {"fifo", "nru", "lru", "aging", "second-chance"}
     self.algorithm = algorithm
 
   def put(self, frameId):
@@ -95,17 +95,12 @@ class NRU(PhysicalMemory):
         break
     self.frames[index]= (frameId, True, isWrite, prioridade)
 
-
-    
-  
 class LRU(PhysicalMemory):
   def __init__(self):
     super(LRU, self).__init__("lru")
     self.lista = []
   
   def put(self, frameId):
-    if frameId in self.lista:
-      self.lista.remove(frameId)
     self.lista.append(frameId)
 
   def evict(self):
@@ -115,8 +110,9 @@ class LRU(PhysicalMemory):
     pass
 
   def access(self, frameId, isWrite):
-    pass
-  
+    if frameId in self.lista:
+      self.lista.remove(frameId)
+    self.lista.append(frameId)
 
 class Aging(PhysicalMemory):
   def __init__(self):
@@ -167,5 +163,5 @@ class SecondChance(PhysicalMemory):
     pass
 
   def access(self, frameId, isWrite):
-    pass
+    self.second_chance[frameId] = 0
 

@@ -62,6 +62,7 @@ if __name__ == "__main__":
     mapNameToClass = {
         "fifo": FIFO,
         "nru": NRU,
+        "lru": LRU,
         "aging": Aging,
         "second-chance": SecondChance
     }
